@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.example.authrole.mapper.RoleMapper">
+
+    <resultMap id="PermissionResultMap" type="org.example.authrole.entity.Permission">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="menuType" column="type"/>
+        <result property="code" column="code"/>
+        <result property="path" column="path"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="sort" column="sort"/>
+        <result property="createTime" column="create_time"/>
+        <!--
+          通过 columnPrefix="c_"，MyBatis 会自动把带有 c_ 前缀的列
+          映射到子对象的属性中
+        -->
+        <!--
+        <collection property="children"
+                    ofType="org.example.authrole.entity.Permission"
+                    resultMap="PermissionResultMap"
+                    columnPrefix="c_"/>
+                    -->
+    </resultMap>
+    <select id="getAllPermission" resultMap="PermissionResultMap">
+        SELECT * FROM permission
+    </select>
+    <!-- 一次性查出父子关系 -->
+    <select id="findAll" resultMap="PermissionResultMap">
+        SELECT
+            p.id, p.name, p.type, p.code, p.path, p.parent_id, p.sort, p.create_time,
+            c.id AS c_id,
+            c.name AS c_name,
+            c.type AS c_type,
+            c.code AS c_code,
+            c.path AS c_path,
+            c.parent_id AS c_parent_id,
+            c.sort AS c_sort,
+            c.create_time AS c_create_time
+        FROM permission p
+                 LEFT JOIN permission c ON c.parent_id = p.id
+        WHERE p.parent_id = 0
+    </select>
+
+
+    <insert id="authRole" parameterType="org.example.authrole.dto.AuthRoleDTO">
+        INSERT INTO role_permission (role_id, permission_id)
+        VALUES
+        <foreach collection="permissionIds" item="permissionId" separator=",">
+            (#{roleId}, #{permissionId})
+        </foreach>
+    </insert>
+
+    <delete id="deleteRolePermission" parameterType="int">
+        DELETE
+        FROM role_permission
+        WHERE role_id = #{roleId}
+    </delete>
+
+</mapper>
