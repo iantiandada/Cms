@@ -70,4 +70,8 @@ public class AuthController {
                 .filter(p -> p.getParentId() == 0)
                 .collect(Collectors.toList());
     }
+    @GetMapping("/getPermissionOfCurrentRole")
+    public List<Integer> getPermissionOfCurrentRole(Integer roleId){
+        return roleMapper.getPermissionOfCurrentRole(roleId);
+    }
 }

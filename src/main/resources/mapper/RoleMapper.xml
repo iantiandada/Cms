@@ -42,6 +42,12 @@
         WHERE p.parent_id = 0
     </select>
 
+    <select id="getPermissionOfCurrentRole" resultType="int">
+        SELECT permission_id
+        FROM role_permission
+        WHERE role_id = #{roleId}
+    </select>
+
 
     <insert id="authRole" parameterType="org.example.authrole.dto.AuthRoleDTO">
         INSERT INTO role_permission (role_id, permission_id)

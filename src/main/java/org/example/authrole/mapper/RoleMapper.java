@@ -16,4 +16,6 @@ public interface RoleMapper extends BaseMapper<Role> {
     void deleteRolePermission(Integer roleId);
 
     List<Permission> getAllPermission();
+
+    List<Integer> getPermissionOfCurrentRole(Integer roleId);
 }
