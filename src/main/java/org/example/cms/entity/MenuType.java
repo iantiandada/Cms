@@ -1,4 +1,4 @@
-package org.example.authrole.entity;
+package org.example.cms.entity;
 
 public enum MenuType {
     DIRECTORY("目录"),

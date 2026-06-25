@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.example.cms.mapper.RoleMapper">
+<mapper namespace="org.example.cms.mapper.PermissionMapper">
 
     <resultMap id="PermissionResultMap" type="org.example.cms.entity.Permission">
         <id property="id" column="id"/>
@@ -16,19 +16,5 @@
     <select id="getAllPermission" resultMap="PermissionResultMap">
         SELECT * FROM permission;
     </select>
-
-    <select id="getPermissionCurrentRole" resultType="java.lang.Integer">
-        SELECT permission_id
-        FROM role_permission
-        WHERE role_id=#{roleId}
-    </select>
-
-    <select id="getPermissionIdsByUserId" resultType="java.lang.Integer">
-        SELECT DISTINCT rp.permission_id
-        FROM user_role ur
-                 JOIN role_permission rp ON ur.role_id = rp.role_id
-        WHERE ur.user_id = #{userId}
-    </select>
-
 
 </mapper>

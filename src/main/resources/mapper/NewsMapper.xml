@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.example.cms.mapper.NewsMapper">
+
+    <resultMap id="NewsMap" type="org.example.cms.entity.News">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="category" column="category"/>
+        <result property="supplier" column="supplier"/>
+        <result property="reviewer" column="reviewer"/>
+        <result property="content" column="content"/>
+        <result property="status" column="status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="publishTime" column="publish_time"/>
+    </resultMap>
+    <select id="newsList" resultMap="NewsMap">
+        SELECT *
+        FROM news LIMIT  #{start},#{rows};
+    </select>
+    <select id="newsCount" resultType="int">
+        SELECT COUNT(id)
+        FROM news
+    </select>
+    <!-- 按分类查询，带分页 -->
+    <select id="getNewsByCategory" resultMap="NewsMap">
+        SELECT * FROM news
+        WHERE category = #{category}
+        ORDER BY create_time DESC
+        LIMIT #{start}, #{rows}
+    </select>
+
+    <!-- 统计某分类下的新闻总数 -->
+    <select id="countByCategory" resultType="int">
+        SELECT COUNT(*) FROM news WHERE category = #{category}
+    </select>
+
+</mapper>

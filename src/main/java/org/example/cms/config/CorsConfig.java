@@ -1,4 +1,4 @@
-package org.example.authrole.config;
+package org.example.cms.config;
 
 
 import org.springframework.context.annotation.Bean;

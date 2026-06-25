@@ -1,4 +1,4 @@
-package org.example.authrole.entity;
+package org.example.cms.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;

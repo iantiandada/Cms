@@ -1,4 +1,4 @@
-package org.example.authrole.dto;
+package org.example.cms.dto;
 
 import lombok.Data;
 
@@ -9,3 +9,4 @@ public class AuthRoleDTO {
     private Integer roleId;
     private List<Integer> permissionIds;
 }
+
