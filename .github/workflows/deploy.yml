@@ -86,61 +86,22 @@ jobs:
         run: |
           export JAVA_HOME=/opt/jdk-17.0.12
           export PATH=/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:$PATH
-          set -x
-
           if [ -f "./RUN_MAVEN_BUILD" ]; then
-              echo "=== Full Versioned Deploy Start ==="
-
-              # 1. 确认构建产物
-              echo ">> Checking built artifact:"
-              ls -l target/*.jar || { echo "ERROR: No jar found in target!"; exit 1; }
-
-              # 2. 部署新包
+              echo "Action: Full Versioned Deploy"
               REL_DIR="/app/cms/releases/${{ github.sha }}"
-              sudo mkdir -p "$REL_DIR"
-              sudo cp target/*.jar "$REL_DIR/my-cms.jar"
-              sudo ln -snf "$REL_DIR/my-cms.jar" /app/cms/current.jar
-
-              # 验证符号链接指向的文件是否存在
-              echo ">> Current symlink points to:"
-              readlink -f /app/cms/current.jar
-              ls -l /app/cms/current.jar
-
-              # 3. 清理旧版本
+              sudo mkdir -p $REL_DIR
+          
+              # 物理保险
+              sudo cp target/*.jar $REL_DIR/my-cms.jar
+              sudo ln -snf $REL_DIR/my-cms.jar /app/cms/current.jar
+          
+              # 保留 5 个版本
               cd /app/cms/releases && ls -t | tail -n +6 | xargs sudo rm -rf 2>/dev/null || true
-
-              # 4. 重启服务
-              echo ">> Restarting cms service..."
-              sudo systemctl restart cms 2>&1
-              sleep 3   # 给 systemd 一点时间
-
-              # 5. 立即获取服务状态和启动日志
-              echo ">> Service status:"
-              sudo systemctl status cms --no-pager || true
-              echo ">> Recent service logs (last 50 lines):"
-              sudo journalctl -u cms -n 50 --no-pager || true
-
-              # 6. 等待 HTTP 服务可用（最多 120 秒）
-              echo ">> Waiting for service to respond on http://localhost:8080 ..."
-              for i in {1..60}; do
-                  # 先检查端口是否监听
-                  if ss -tuln | grep -q :8080; then
-                      echo "Port 8080 is listening, testing HTTP..."
-                      # 尝试发一个 HTTP 请求（有些应用可能需要特定路径，这里访问根路径）
-                      if curl -s -o /dev/null -w "%{http_code}" http://localhost:8080 | grep -qE "^(2|3|4)"; then
-                          echo "✅ Service is UP and responding to HTTP!"
-                          exit 0
-                      fi
-                  fi
-                  echo "Attempt $i/60: Service not ready yet, waiting..."
-                  sleep 2
+          
+              sudo systemctl restart cms
+              for i in {1..20}; do
+                if ss -tuln | grep -q :8080; then echo "Service UP!"; exit 0; fi
+                sleep 3
               done
-
-              # 7. 超时失败：收集完整信息
-              echo "❌ Service failed to start within 120 seconds."
-              echo ">> Final service status:"
-              sudo systemctl status cms --no-pager
-              echo ">> Full service log:"
-              sudo journalctl -u cms --no-pager -n 100
               exit 1
           fi
