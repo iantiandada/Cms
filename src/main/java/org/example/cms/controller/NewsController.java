@@ -79,7 +79,7 @@ public class NewsController {
         //返回固定格式给前端
         Map<String, Object> result = new HashMap<>();
         Map<String, Object> dataMap=new HashMap<>();
-        dataMap.put("url", "http://localhost:9002/upload/"+file.getOriginalFilename());
+        dataMap.put("url", "/upload/"+file.getOriginalFilename());
 
         result.put("errno",0);
         result.put("data",dataMap);
