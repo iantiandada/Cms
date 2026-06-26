@@ -99,9 +99,9 @@ jobs:
               cd /app/cms/releases && ls -t | tail -n +6 | xargs sudo rm -rf 2>/dev/null || true
           
               sudo systemctl restart cms
-              for i in {1..30}; do
+              for i in {1..120}; do
                 if ss -tuln | grep -q :8080; then echo "Service UP!"; exit 0; fi
-                sleep 5
+                sleep 3
               done
               exit 1
           fi
